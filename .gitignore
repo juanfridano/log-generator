@@ -1,0 +1,8 @@
+.terraform/
+.terraform*
+
+*.txt
+*.tfplan
+*.tfstate
+*.backup
+*-key.json

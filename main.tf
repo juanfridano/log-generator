@@ -21,7 +21,7 @@ resource "google_cloud_run_service" "log_service" {
         image = var.image_url
         env {
           name  = "LOG_FREQUENCY_SECONDS"
-          value = "5"  # Adjust the logging frequency
+          value = var.logging_frequency
         }
       }
     }
@@ -41,15 +41,23 @@ resource "google_cloud_run_service" "log_service" {
   }
 }
 
+resource "google_cloud_run_service_iam_member" "unauthenticated_access" {
+  count   = var.service_count
+  service = google_cloud_run_service.log_service[count.index].name
+  location = var.region
+  role    = "roles/run.invoker"
+  member  = "allUsers"
+}
+
 resource "google_project_iam_binding" "cloud_run_logging" {
   project = var.project
   role    = "roles/run.invoker"
   members = [
-    "serviceAccount:${google_service_account.cloud_run_sa.email}"
+    "serviceAccount:${var.service_account}@${var.project}.iam.gserviceaccount.com"
   ]
 }
 
 resource "google_service_account" "cloud_run_sa" {
-  account_id   = "cloud-run-logging-sa"
+  account_id   = var.service_account
   display_name = "Cloud Run Logging Service Account"
 }

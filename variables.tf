@@ -9,6 +9,16 @@ variable "image_url" {
 variable "region" {
   description = "The region for the Cloud Run service"
 }
+
 variable "project" {
   description = "The project name"
+}
+
+variable "logging_frequency" {
+  description = "How often should a log be created in seconds"
+  default = 5
+}
+
+variable "service_account" {
+  description = "Service account name"
 }
